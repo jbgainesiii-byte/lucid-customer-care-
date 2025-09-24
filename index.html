@@ -53,22 +53,23 @@
 
   /* Hero + countdown */
   .hero{text-align:center;margin:22px auto 8px;}
-  /* Improved title: layered gradient + subtle "stroke" via multiple shadows for crisp edges */
+  /* Upgraded title with ultra-slow sun-beam sweep */
   .title{
-    --grad: conic-gradient(from 90deg,#fff 0 12%,var(--pink) 12% 35%,var(--purple) 35% 60%,var(--green) 60% 80%,var(--orange) 80% 100%);
+    --grad: linear-gradient(90deg,#fff 0%, var(--pink) 15%, var(--purple) 40%, var(--green) 65%, var(--orange) 85%, #fff 100%);
     font-weight:1000; letter-spacing:.02em; line-height:1.03;
     font-size:clamp(38px,7.2vw,74px);
-    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
-    /* faux stroke for legibility on bright backgrounds */
-    text-shadow:
-      0 0 0.01px rgba(0,0,0,.35),
-      0.8px 0.8px 0 rgba(255,255,255,.35),
-      -0.8px -0.8px 0 rgba(255,255,255,.2),
-      0 2px 18px rgba(255,255,255,.28);
+    background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+    position: relative;
+    text-shadow: 0 0 0.01px rgba(0,0,0,.35), 0.8px 0.8px 0 rgba(255,255,255,.35), -0.8px -0.8px 0 rgba(255,255,255,.2);
   }
-  @supports (-webkit-text-stroke: 1px #fff) {
-    .title{-webkit-text-stroke: 1px rgba(255,255,255,.35);}
+  .title::after{
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.3) 50%, transparent 100%);
+    mix-blend-mode: screen; animation: sunbeam 38s linear infinite;
+    pointer-events:none;
   }
+  @keyframes sunbeam{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  @supports (-webkit-text-stroke: 1px #fff) {.title{-webkit-text-stroke: 1px rgba(255,255,255,.25);}}
   .subtitle{margin-top:6px;color:#073b4c;font-weight:800}
 
   .count{margin:16px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
@@ -224,7 +225,7 @@
   </div>
 
   <!-- Day Cards -->
-  <section class="grid">
+  <section class="grid" id="week">
     <!-- Monday -->
     <article class="card" id="mon">
       <div class="head"
@@ -242,7 +243,7 @@
           <li>Start the week relaxed, refreshed, and cabana-calm.</li>
           <li>Morning treats: donuts & iced coffee on the boardwalk.</li>
         </ul>
-        <a class="btn" href="#mon" aria-label="See the full Monday schedule">View Monday schedule</a>
+        <button class="btn" data-toggle="expander" data-target="#mon" aria-expanded="false">View Monday schedule</button>
       </div>
     </article>
 
@@ -263,7 +264,7 @@
           <li>Rapid-fire case hacks: share a 60-second tip.</li>
           <li>Prizes: towels, bottles, gift cards.</li>
         </ul>
-        <a class="btn" href="#tue" aria-label="See the full Tuesday schedule">View Tuesday schedule</a>
+        <button class="btn" data-toggle="expander" data-target="#tue" aria-expanded="false">View Tuesday schedule</button>
       </div>
     </article>
 
@@ -284,7 +285,7 @@
           <li>Tropical snack bar: pineapple, mango, sparkling water.</li>
           <li>Post a gratitude note to the teammate wall.</li>
         </ul>
-        <a class="btn" href="#wed" aria-label="See the full Wednesday schedule">View Wednesday schedule</a>
+        <button class="btn" data-toggle="expander" data-target="#wed" aria-expanded="false">View Wednesday schedule</button>
       </div>
     </article>
 
@@ -304,7 +305,7 @@
           <li>Rock your favorite era—70s grooves, 80s neon, 90s chill, 2000s vibes.</li>
           <li>Cross-team beach-ball stand-up: quick wins & shout-outs.</li>
         </ul>
-        <a class="btn" href="#thu" aria-label="See the full Thursday schedule">View Thursday schedule</a>
+        <button class="btn" data-toggle="expander" data-target="#thu" aria-expanded="false">View Thursday schedule</button>
       </div>
     </article>
 
@@ -325,7 +326,7 @@
           <li>Recognition & awards: Peak Performers, MVP, Spirit Award.</li>
           <li>Grand prizes & good vibes to close the week.</li>
         </ul>
-        <a class="btn" href="#fri" aria-label="See the full Friday schedule">View Friday schedule</a>
+        <button class="btn" data-toggle="expander" data-target="#fri" aria-expanded="false">View Friday schedule</button>
       </div>
     </article>
   </section>
@@ -335,6 +336,9 @@
     <h2 class="spotlight-title">Team Spotlight</h2>
     <div id="ballStage" class="stage" aria-hidden="false"></div>
     <div id="staticNames" class="name-grid" hidden aria-hidden="true"></div>
+    <div style="text-align:center;margin-top:10px;">
+      <button id="toggleRoster" class="btn" style="background:linear-gradient(90deg,#10b981,#22d3ee);">Show full roster</button>
+    </div>
   </section>
 </div>
 
@@ -358,44 +362,67 @@
     var timer=setInterval(tick,1000);tick();
   })();
 
-  /* ===== Robust expanders (About + Day cards) ===== */
+  /* ===== Unified expanders (About + Day cards) ===== */
+  function closeAllCards(exceptId){
+    document.querySelectorAll('.card.open').forEach(card=>{
+      if (exceptId && card.id===exceptId) return;
+      card.classList.remove('open');
+      const head = card.querySelector('[data-toggle="expander"]');
+      if (head) head.setAttribute('aria-expanded','false');
+    });
+  }
+
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-toggle="expander"]');
-    if (!btn) return;
-    const sel = btn.getAttribute('data-target');
-    const panel = document.querySelector(sel);
-    if (!panel) return;
-    panel.classList.toggle('open');
-    const isOpen = panel.classList.contains('open');
-    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    if (btn) {
+      const sel = btn.getAttribute('data-target');
+      const panel = document.querySelector(sel);
+      if (!panel) return;
+
+      // Accordion: close others if it's a day card
+      if (panel.classList.contains('card')) closeAllCards(panel.id);
+
+      const nowOpen = !panel.classList.contains('open');
+      panel.classList.toggle('open', nowOpen);
+      // update expander buttons associated with this panel
+      document.querySelectorAll('[data-target="'+sel+'"]').forEach(x=>x.setAttribute('aria-expanded', nowOpen ? 'true':'false'));
+      return;
+    }
+
+    // Click-away close for day cards
+    const card = e.target.closest('.card');
+    if (!card) closeAllCards(); // clicked outside all cards
   });
-  // Keyboard support for expander headers
+
+  // Keyboard support for expander headers/buttons
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeAllCards(); return; }
     const btn = e.target.closest('[data-toggle="expander"]');
     if (!btn) return;
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
   });
-  // Deep-linking to cards (#mon, #tue, ...)
-  function openHashCard(){
+
+  // Deep-linking (#about, #mon, #tue, etc.)
+  function openHashTarget(){
     const el = document.querySelector(location.hash);
-    if (el && el.classList.contains('card')) {
+    if (!el) return;
+    if (el.id === 'about') {
+      el.classList.add('open');
+      const head = document.querySelector('[data-target="#about"]');
+      if (head) head.setAttribute('aria-expanded','true');
+      el.scrollIntoView({ behavior:'smooth', block:'start' });
+    } else if (el.classList.contains('card')) {
+      closeAllCards(el.id);
       el.classList.add('open');
       const head = el.querySelector('[data-toggle="expander"]');
       if (head) head.setAttribute('aria-expanded','true');
       el.scrollIntoView({ behavior:'smooth', block:'start' });
     }
-    if (location.hash === '#about') {
-      const about = document.querySelector('#about');
-      about.classList.add('open');
-      const head = about.querySelector('[data-toggle="expander"]');
-      if (head) head.setAttribute('aria-expanded','true');
-      about.scrollIntoView({ behavior:'smooth', block:'start' });
-    }
   }
-  window.addEventListener('hashchange', openHashCard);
-  if (location.hash) openHashCard();
+  window.addEventListener('hashchange', openHashTarget);
+  if (location.hash) openHashTarget();
 
-  /* ===== Beach Ball Name Parade (reduced motion fallback to grid) ===== */
+  /* ===== Beach Ball Name Parade (first names, round-robin, coverage) ===== */
   const PEOPLE = [
     "Marquise Adeleye","Jay Arevalo","Anthony Bastone","Nader Bazzi","Omari Billingsley",
     "Shakera Bland","Joeyi Chiang","Jasmine Christian","Mya Clark","JaVonte Gordy-Pulliam",
@@ -403,27 +430,51 @@
     "Nik Nippa","Aline Ntumba","Jeromy Porter","Phil Romo","Justin Schoeneman",
     "Derrick-Anthony Stallings","Daniel Yaquinto"
   ];
+  const FIRSTS = PEOPLE.map(n => n.split(/[ \-]/)[0]); // first token only (handles hyphenated)
+
   (function beachBallParade(){
     const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const stage = document.getElementById('ballStage');
     const grid  = document.getElementById('staticNames');
+    const toggleRoster = document.getElementById('toggleRoster');
 
-    if (prefersReduced) {
-      grid.hidden = false; grid.setAttribute('aria-hidden','false');
+    // Static grid builder
+    function buildGrid(){
+      grid.innerHTML='';
       PEOPLE.forEach(n => {
         const chip = document.createElement('div');
         chip.className = 'name-chip'; chip.textContent = n;
         grid.appendChild(chip);
       });
+    }
+
+    // Toggle full roster (works in both modes)
+    toggleRoster.addEventListener('click', ()=>{
+      const showingGrid = !grid.hidden;
+      if (showingGrid){
+        grid.hidden = true; grid.setAttribute('aria-hidden','true');
+        toggleRoster.textContent = 'Show full roster';
+      } else {
+        buildGrid();
+        grid.hidden = false; grid.setAttribute('aria-hidden','false');
+        toggleRoster.textContent = 'Hide full roster';
+        grid.scrollIntoView({behavior:'smooth', block:'nearest'});
+      }
+    });
+
+    if (prefersReduced) {
+      // Reduced motion: keep stage hidden by CSS, let user show grid on demand
       return;
     }
 
-    const MAX_ACTIVE = matchMedia('(min-width:1024px)').matches ? 6 : 3;
-    let cursor = 0, active = 0;
+    const desktop = matchMedia('(min-width:1024px)').matches;
+    const MAX_ACTIVE = desktop ? 6 : 4;       // concurrent balls
+    const SPAWN_MS   = desktop ? 2800 : 3200; // spawn interval
+    let cursor = 0, active = 0, spawnTimer = null;
 
-    function nextName() {
-      const name = PEOPLE[cursor];
-      cursor = (cursor + 1) % PEOPLE.length;
+    function nextFirst() {
+      const name = FIRSTS[cursor];
+      cursor = (cursor + 1) % FIRSTS.length;
       return name;
     }
 
@@ -432,33 +483,59 @@
       const tag  = document.createElement('span');
       ball.className = 'ball';
       tag.className  = 'tag';
-      tag.textContent = nextName();
+      tag.textContent = nextFirst();
 
+      // randomized size/position/duration within gentle bounds
       const size = Math.floor(80 + Math.random()*50); // 80–130px
       ball.style.width = size + 'px';
       ball.style.height = size + 'px';
       const top = 10 + Math.random()*80; // 10–90%
       ball.style.top = top + '%';
       ball.style.setProperty('--y', (Math.random() < .5 ? '-' : '') + Math.floor(Math.random()*16) + 'px');
-      const dur = 18 + Math.random()*12; // 18–30s
+      const dur = 20 + Math.random()*6; // 20–26s
       ball.style.setProperty('--dur', dur + 's');
-      ball.style.setProperty('--delay', (Math.random()*4).toFixed(2) + 's');
+      ball.style.setProperty('--delay', (Math.random()*2).toFixed(2) + 's');
 
       ball.appendChild(tag);
       stage.appendChild(ball);
 
-      const kill = () => { ball.remove(); active--; maybeFill(); };
+      const kill = () => { ball.remove(); active--; ensureFill(); };
       ball.addEventListener('animationend', kill, { once: true });
     }
 
-    function maybeFill(){
+    function ensureFill(){
       while (active < MAX_ACTIVE) { active++; spawnBall(); }
     }
-    maybeFill();
 
-    // Pause on hover
+    function startSpawning(){
+      if (spawnTimer) return;
+      ensureFill();
+      spawnTimer = setInterval(()=>{ if (active < MAX_ACTIVE) { active++; spawnBall(); } }, SPAWN_MS);
+    }
+    function stopSpawning(){
+      if (spawnTimer){ clearInterval(spawnTimer); spawnTimer = null; }
+    }
+
+    // Pause when stage not visible (saves CPU)
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting){
+          stage.classList.remove('paused');
+          startSpawning();
+        } else {
+          stage.classList.add('paused');
+          stopSpawning();
+        }
+      });
+    }, {threshold: 0.05});
+    io.observe(stage);
+
+    // Hover pause for readability
     stage.addEventListener('mouseenter', ()=> stage.classList.add('paused'));
     stage.addEventListener('mouseleave', ()=> stage.classList.remove('paused'));
+
+    // Kick off
+    startSpawning();
   })();
 </script>
 </body>
