@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customer Service Week — Beach Board</title>
+<meta name="theme-color" content="#22d3ee">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2322d3ee'/%3E%3Cpath d='M12 46c10-6 18-18 18-30 10 14 20 20 22 22' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --sky:#7dd3fc; --sea:#22d3ee; --deep:#0ea5e9; --sand:#fde68a; --sun:#facc15;
+    --ink:#0b1220; --card:#ffffff; --muted:#475569;
+    --pink:#fb7185; --purple:#a78bfa; --green:#10b981; --orange:#fb923c;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    color:var(--ink);
+    background: radial-gradient(900px 600px at 80% -10%,rgba(255,255,255,.45) 0%,rgba(255,255,255,0) 65%),
+      linear-gradient(180deg,var(--sky) 0%,#bde6ff 35%,var(--sea) 70%,var(--sand) 100%);
+    overflow-x:hidden;
+  }
+  .container{max-width:1200px;margin:0 auto;padding:16px 20px 120px}
+
+  /* Header */
+  .header{display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:10px 14px;margin:8px auto 12px;background:rgba(255,255,255,.55);
+    backdrop-filter:saturate(140%) blur(6px); border-radius:14px; border:1px solid rgba(0,0,0,.06)}
+  .wordmark{letter-spacing:.35em;font-weight:800;font-size:14px}
+  .chip{font-size:12px;border:1px solid rgba(0,0,0,.1);padding:6px 10px;border-radius:999px;background:#fff}
+  .chip a{color:inherit;text-decoration:none}
+
+  /* Beach art */
+  .sun{position:fixed;right:6vw;top:4vh;width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#fff 0 20%,var(--sun) 21% 70%,#f59e0b 71% 100%);
+    box-shadow:0 0 80px 20px rgba(250,204,21,.45);z-index:-1;}
+  .waves{position:fixed;left:0;right:0;bottom:180px;height:90px;z-index:-1;opacity:.65;
+    background:url('data:image/svg+xml;utf8,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 90" preserveAspectRatio="none">\
+      <path d="M0,30 C150,60 300,0 450,30 C600,60 750,0 900,30 C1050,60 1200,0 1200,0 L1200,90 L0,90 Z" fill="%230ea5e9"/>\
+      <path d="M0,50 C150,80 300,20 450,50 C600,80 750,20 900,50 C1050,80 1200,20 1200,20 L1200,90 L0,90 Z" fill="%2322d3ee"/>\
+    </svg>') center/cover no-repeat;}
+  .palms{position:fixed;left:0;bottom:0;width:100%;height:200px;pointer-events:none;z-index:-1;
+    background:linear-gradient(to top,rgba(253,230,138,1) 0%,rgba(253,230,138,0) 70%),
+    url('data:image/svg+xml;utf8,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 200">\
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">\
+        <path d="M150 200 C170 150 170 120 170 60" stroke="%23b45309" stroke-width="8"/>\
+        <path d="M170 60 c-20 -30 -60 -35 -85 -10 M170 60 c25 -25 65 -22 90 5 M170 60 c-5 -35 20 -60 55 -70 M170 60 c0 -40 -25 -65 -55 -75" stroke="%2310b981" stroke-width="10"/>\
+        <path d="M980 200 C1000 150 1000 120 1000 55" stroke="%23b45309" stroke-width="8"/>\
+        <path d="M1000 55 c-20 -28 -55 -30 -80 -8 M1000 55 c24 -22 60 -20 85 6 M1000 55 c-2 -34 20 -56 52 -65 M1000 55 c2 -38 -20 -60 -50 -70" stroke="%2310b981" stroke-width="10"/>\
+      </g></svg>');background-repeat:no-repeat;background-position:center bottom;background-size:cover;}
+
+  /* Hero + countdown */
+  .hero{text-align:center;margin:22px auto 8px;}
+  /* Improved title: layered gradient + subtle "stroke" via multiple shadows for crisp edges */
+  .title{
+    --grad: conic-gradient(from 90deg,#fff 0 12%,var(--pink) 12% 35%,var(--purple) 35% 60%,var(--green) 60% 80%,var(--orange) 80% 100%);
+    font-weight:1000; letter-spacing:.02em; line-height:1.03;
+    font-size:clamp(38px,7.2vw,74px);
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+    /* faux stroke for legibility on bright backgrounds */
+    text-shadow:
+      0 0 0.01px rgba(0,0,0,.35),
+      0.8px 0.8px 0 rgba(255,255,255,.35),
+      -0.8px -0.8px 0 rgba(255,255,255,.2),
+      0 2px 18px rgba(255,255,255,.28);
+  }
+  @supports (-webkit-text-stroke: 1px #fff) {
+    .title{-webkit-text-stroke: 1px rgba(255,255,255,.35);}
+  }
+  .subtitle{margin-top:6px;color:#073b4c;font-weight:800}
+
+  .count{margin:16px auto 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+  .countbox{background:rgba(255,255,255,.78);border:1px solid rgba(0,0,0,.08);border-radius:14px;
+    min-width:92px;padding:10px 12px;text-align:center;box-shadow:0 6px 16px rgba(14,165,233,.25);}
+  .k{font-weight:900;font-size:clamp(22px,4.2vw,36px);line-height:1}
+  .klab{margin-top:4px;color:#0b1220aa;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+
+  /* Center info card */
+  .center-wrap{display:grid;place-items:center;margin:18px 0 6px}
+  .center-card{width:min(860px,100%);background:var(--card);border:1px solid rgba(0,0,0,.08);
+    border-radius:16px;padding:16px 18px;box-shadow:0 12px 30px rgba(0,0,0,.12);}
+  .center-card .title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;min-height:44px}
+  .badge{background:#fff2;border:1px solid rgba(0,0,0,.08);border-radius:999px;padding:6px 10px;font-size:12px}
+  .expand{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .center-card.open .expand{max-height:420px}
+
+  /* Day cards */
+  .grid{display:grid;gap:14px;margin:14px 0 0;grid-template-columns:repeat(1,minmax(0,1fr));}
+  @media (min-width:720px){.grid{grid-template-columns:repeat(3,1fr);}}
+  @media (min-width:1024px){.grid{grid-template-columns:repeat(5,1fr);}}
+  .card{background:var(--card);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:14px;
+    box-shadow:0 10px 24px rgba(0,0,0,.12);}
+  .head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;min-height:44px}
+  .dow{display:inline-flex;align-items:center;gap:8px;font-weight:900}
+  .pill{font-size:12px;padding:5px 9px;border-radius:999px;color:#053b4c;font-weight:800}
+  .pill.pink{background:#fecdd3}.pill.sea{background:#a5f3fc}.pill.green{background:#bbf7d0}.pill.orange{background:#fed7aa}
+  .chev{transition:transform .25s ease}.card.open .chev{transform:rotate(180deg)}
+  .details{max-height:0;overflow:hidden;transition:max-height .35s ease}
+  .card.open .details{max-height:420px}
+  .list{margin:10px 0 6px;padding-left:18px;color:var(--muted)}.list li{margin:6px 0}
+  .btn{display:inline-block;margin-top:8px;background:linear-gradient(90deg,var(--deep),var(--sea));
+    color:#fff;border:none;border-radius:999px;padding:10px 14px;font-weight:800;text-decoration:none;
+    box-shadow:0 6px 18px rgba(14,165,233,.35);}
+  .btn:focus,[data-toggle="expander"]:focus{outline:3px solid #0ea5e9;outline-offset:3px}
+
+  /* ===== Beach Ball Name Parade ===== */
+  .beach-stage { margin: 40px auto 8px; max-width: 1200px; padding: 0 20px; }
+  .beach-stage .spotlight-title{
+    margin: 0 0 12px; text-align: center; font-weight: 900; font-size: 28px;
+    background: linear-gradient(90deg,#f59e0b,#ef4444,#a78bfa,#10b981,#22d3ee);
+    -webkit-background-clip:text; background-clip:text; color: transparent;
+    text-shadow: 0 1px 8px rgba(255,255,255,.35);
+  }
+  .stage {
+    position: relative; height: 260px; overflow: hidden;
+    border-radius: 16px;
+    background: linear-gradient(to top, rgba(255,255,255,.45), rgba(255,255,255,.15));
+    box-shadow: 0 10px 24px rgba(0,0,0,.12);
+    border: 1px solid rgba(0,0,0,.06);
+  }
+  .stage.paused .ball{ animation-play-state: paused !important; }
+
+  .ball {
+    position: absolute; top: 50%; left: -20%;
+    border-radius: 50%; will-change: transform, opacity;
+    box-shadow: 0 10px 20px rgba(0,0,0,.18), inset 0 8px 18px rgba(255,255,255,.35);
+    border: 2px solid rgba(255,255,255,.8);
+    animation: drift var(--dur,22s) linear var(--delay,0s) infinite;
+    opacity: 0;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), transparent 45%),
+      conic-gradient(#ffffff 0 15%, #22d3ee 15% 30%, #facc15 30% 45%, #fb7185 45% 60%, #10b981 60% 75%, #a78bfa 75% 90%, #ffffff 90% 100%);
+  }
+  .ball::after{
+    content: ""; position: absolute; width: 30%; height: 30%; left: 12%; top: 12%;
+    background: radial-gradient(circle, rgba(255,255,255,.85), transparent 60%);
+    border-radius: 50%;
+  }
+  .ball .tag {
+    display: inline-block;
+    background: rgba(255,255,255,.9);
+    color: #053b4c; font-weight: 800; font-size: 12px;
+    padding: 6px 10px; border-radius: 999px;
+    box-shadow: 0 6px 12px rgba(14,165,233,.18);
+    text-align: center; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  @keyframes drift {
+    0%   { transform: translate(-20%, var(--y,0)) scale(.95); opacity: 0; }
+    6%   { opacity: 1; }
+    50%  { transform: translate(50vw, calc(var(--y,0) - 8px)) scale(1); }
+    94%  { opacity: 1; }
+    100% { transform: translate(120vw, var(--y,0)) scale(1.05); opacity: 0; }
+  }
+
+  /* Reduced-motion: show static chips instead of animation */
+  @media (prefers-reduced-motion: reduce) {
+    .stage { display: none; }
+    #staticNames { display: grid !important; }
+  }
+  .name-grid{
+    display:grid; gap:10px; grid-template-columns:repeat(2,minmax(0,1fr)); margin-top: 8px;
+  }
+  @media (min-width:640px){ .name-grid{ grid-template-columns: repeat(4,1fr); } }
+  @media (min-width:1024px){ .name-grid{ grid-template-columns: repeat(6,1fr); } }
+  .name-chip{
+    background:#fff;color:#053b4c;border:1px solid rgba(0,0,0,.08);
+    border-radius:999px;padding:10px 12px;text-align:center;font-weight:800;font-size:14px;
+    box-shadow:0 6px 14px rgba(14,165,233,.18);
+  }
+</style>
+</head>
+<body>
+<div class="sun"></div><div class="waves"></div><div class="palms"></div>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="brand"><span class="wordmark">L U C I D</span><span style="opacity:.35">|</span><span style="font-weight:700">Customer Care</span></div>
+    <div>
+      <span class="chip"><a href="#about">Customer Service Week</a></span>
+      <span class="chip">Oct 6–10, 2025</span>
+    </div>
+  </div>
+
+  <!-- Hero + countdown -->
+  <div class="hero">
+    <div>
+      <div class="title">CUSTOMER SERVICE WEEK</div>
+      <div class="subtitle">First Annual • Bright • Beachy • Fun</div>
+      <div class="count" role="timer" aria-live="polite" aria-atomic="true" aria-label="Countdown to Customer Service Week">
+        <div class="countbox"><div id="days" class="k">00</div><div class="klab">Days</div></div>
+        <div class="countbox"><div id="hours" class="k">00</div><div class="klab">Hours</div></div>
+        <div class="countbox"><div id="minutes" class="k">00</div><div class="klab">Minutes</div></div>
+        <div class="countbox"><div id="seconds" class="k">00</div><div class="klab">Seconds</div></div>
+      </div>
+      <div id="countdown-helper" style="margin-top:8px;font-size:12px;color:#0b1220aa;"></div>
+    </div>
+  </div>
+
+  <!-- Center info -->
+  <div class="center-wrap">
+    <div class="center-card" id="about">
+      <div class="title-row"
+           data-toggle="expander"
+           data-target="#about"
+           role="button" tabindex="0" aria-expanded="false">
+        <h2 style="margin:0">What is Customer Service Week?</h2>
+        <span class="badge">Tap to expand</span>
+      </div>
+      <div class="expand">
+        <p style="margin:10px 0 0;color:var(--muted);line-height:1.55">
+          Customer Service Week started in the early ’90s to spotlight the essential work of customer-facing teams.
+          It’s held the first full week of October and centers on appreciation, education, and team connection.
+        </p>
+        <p style="margin:8px 0 0;color:var(--muted);line-height:1.55">
+          <strong>At Lucid Motors</strong>, we’re celebrating our first CS Week with daily experiences—food, games, shout-outs,
+          and grand prizes—designed to recharge, connect, and have fun together.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Day Cards -->
+  <section class="grid">
+    <!-- Monday -->
+    <article class="card" id="mon">
+      <div class="head"
+           data-toggle="expander"
+           data-target="#mon"
+           role="button" tabindex="0" aria-expanded="false">
+        <div class="dow">🏖️ <span>Monday</span></div>
+        <div class="pill pink">Pajama Monday</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="details">
+        <h4 style="margin:10px 0 4px">Sandy Snooze Vibes</h4>
+        <ul class="list">
+          <li>Wear your coziest PJs—tropical prints, fuzzy slippers, beach hats welcome.</li>
+          <li>Start the week relaxed, refreshed, and cabana-calm.</li>
+          <li>Morning treats: donuts & iced coffee on the boardwalk.</li>
+        </ul>
+        <a class="btn" href="#mon" aria-label="See the full Monday schedule">View Monday schedule</a>
+      </div>
+    </article>
+
+    <!-- Tuesday -->
+    <article class="card" id="tue">
+      <div class="head"
+           data-toggle="expander"
+           data-target="#tue"
+           role="button" tabindex="0" aria-expanded="false">
+        <div class="dow">🌴 <span>Tuesday</span></div>
+        <div class="pill sea">Team Tuesday</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="details">
+        <h4 style="margin:10px 0 4px">Beach League Spirit</h4>
+        <ul class="list">
+          <li>Rep your favorite team—jerseys, hats, or a beachy twist on colors.</li>
+          <li>Rapid-fire case hacks: share a 60-second tip.</li>
+          <li>Prizes: towels, bottles, gift cards.</li>
+        </ul>
+        <a class="btn" href="#tue" aria-label="See the full Tuesday schedule">View Tuesday schedule</a>
+      </div>
+    </article>
+
+    <!-- Wednesday -->
+    <article class="card" id="wed">
+      <div class="head"
+           data-toggle="expander"
+           data-target="#wed"
+           role="button" tabindex="0" aria-expanded="false">
+        <div class="dow">🌊 <span>Wednesday</span></div>
+        <div class="pill green">Wacky Wednesday</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="details">
+        <h4 style="margin:10px 0 4px">Catch the Crazy Waves</h4>
+        <ul class="list">
+          <li>Go off-the-wall with outfits and goofy vibes—make a splash.</li>
+          <li>Tropical snack bar: pineapple, mango, sparkling water.</li>
+          <li>Post a gratitude note to the teammate wall.</li>
+        </ul>
+        <a class="btn" href="#wed" aria-label="See the full Wednesday schedule">View Wednesday schedule</a>
+      </div>
+    </article>
+
+    <!-- Thursday -->
+    <article class="card" id="thu">
+      <div class="head"
+           data-toggle="expander"
+           data-target="#thu"
+           role="button" tabindex="0" aria-expanded="false">
+        <div class="dow">🏝️ <span>Thursday</span></div>
+        <div class="pill orange">Throwback Thursday</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="details">
+        <h4 style="margin:10px 0 4px">Decades Day</h4>
+        <ul class="list">
+          <li>Rock your favorite era—70s grooves, 80s neon, 90s chill, 2000s vibes.</li>
+          <li>Cross-team beach-ball stand-up: quick wins & shout-outs.</li>
+        </ul>
+        <a class="btn" href="#thu" aria-label="See the full Thursday schedule">View Thursday schedule</a>
+      </div>
+    </article>
+
+    <!-- Friday -->
+    <article class="card" id="fri">
+      <div class="head"
+           data-toggle="expander"
+           data-target="#fri"
+           role="button" tabindex="0" aria-expanded="false">
+        <div class="dow">🎉 <span>Friday</span></div>
+        <div class="pill green">Finale & Awards</div>
+        <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="details">
+        <h4 style="margin:10px 0 4px">Celebrate Together</h4>
+        <ul class="list">
+          <li>Luau-style lunch + group photo.</li>
+          <li>Recognition & awards: Peak Performers, MVP, Spirit Award.</li>
+          <li>Grand prizes & good vibes to close the week.</li>
+        </ul>
+        <a class="btn" href="#fri" aria-label="See the full Friday schedule">View Friday schedule</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- === BEACH BALL NAME PARADE === -->
+  <section id="beach-names" class="beach-stage" aria-label="Team Spotlight">
+    <h2 class="spotlight-title">Team Spotlight</h2>
+    <div id="ballStage" class="stage" aria-hidden="false"></div>
+    <div id="staticNames" class="name-grid" hidden aria-hidden="true"></div>
+  </section>
+</div>
+
+<script>
+  /* ===== Countdown ===== */
+  (function(){
+    var target=new Date("Oct 6, 2025 00:00:00").getTime();
+    var d=document.getElementById("days"),h=document.getElementById("hours"),
+        m=document.getElementById("minutes"),s=document.getElementById("seconds"),
+        helper=document.getElementById("countdown-helper");
+    function pad(n){return n<10?"0"+n:n}
+    function tick(){
+      var now=Date.now(),diff=target-now;
+      if(diff<=0){d.textContent=h.textContent=m.textContent=s.textContent="00";helper.textContent="The celebration has begun!";clearInterval(timer);return}
+      d.textContent=pad(Math.floor(diff/(1000*60*60*24)));
+      h.textContent=pad(Math.floor((diff%(1000*60*60*24))/(1000*60*60)));
+      m.textContent=pad(Math.floor((diff%(1000*60*60))/(1000*60)));
+      s.textContent=pad(Math.floor((diff%(1000*60))/1000));
+      helper.textContent="Countdown to "+new Date(target).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+    }
+    var timer=setInterval(tick,1000);tick();
+  })();
+
+  /* ===== Robust expanders (About + Day cards) ===== */
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-toggle="expander"]');
+    if (!btn) return;
+    const sel = btn.getAttribute('data-target');
+    const panel = document.querySelector(sel);
+    if (!panel) return;
+    panel.classList.toggle('open');
+    const isOpen = panel.classList.contains('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  // Keyboard support for expander headers
+  document.addEventListener('keydown', (e) => {
+    const btn = e.target.closest('[data-toggle="expander"]');
+    if (!btn) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+  });
+  // Deep-linking to cards (#mon, #tue, ...)
+  function openHashCard(){
+    const el = document.querySelector(location.hash);
+    if (el && el.classList.contains('card')) {
+      el.classList.add('open');
+      const head = el.querySelector('[data-toggle="expander"]');
+      if (head) head.setAttribute('aria-expanded','true');
+      el.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+    if (location.hash === '#about') {
+      const about = document.querySelector('#about');
+      about.classList.add('open');
+      const head = about.querySelector('[data-toggle="expander"]');
+      if (head) head.setAttribute('aria-expanded','true');
+      about.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+  }
+  window.addEventListener('hashchange', openHashCard);
+  if (location.hash) openHashCard();
+
+  /* ===== Beach Ball Name Parade (reduced motion fallback to grid) ===== */
+  const PEOPLE = [
+    "Marquise Adeleye","Jay Arevalo","Anthony Bastone","Nader Bazzi","Omari Billingsley",
+    "Shakera Bland","Joeyi Chiang","Jasmine Christian","Mya Clark","JaVonte Gordy-Pulliam",
+    "James Hultz","Ashli Hunter","Jaylen Hunter","Daniel Kirk","Aaron Klenke",
+    "Nik Nippa","Aline Ntumba","Jeromy Porter","Phil Romo","Justin Schoeneman",
+    "Derrick-Anthony Stallings","Daniel Yaquinto"
+  ];
+  (function beachBallParade(){
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stage = document.getElementById('ballStage');
+    const grid  = document.getElementById('staticNames');
+
+    if (prefersReduced) {
+      grid.hidden = false; grid.setAttribute('aria-hidden','false');
+      PEOPLE.forEach(n => {
+        const chip = document.createElement('div');
+        chip.className = 'name-chip'; chip.textContent = n;
+        grid.appendChild(chip);
+      });
+      return;
+    }
+
+    const MAX_ACTIVE = matchMedia('(min-width:1024px)').matches ? 6 : 3;
+    let cursor = 0, active = 0;
+
+    function nextName() {
+      const name = PEOPLE[cursor];
+      cursor = (cursor + 1) % PEOPLE.length;
+      return name;
+    }
+
+    function spawnBall() {
+      const ball = document.createElement('div');
+      const tag  = document.createElement('span');
+      ball.className = 'ball';
+      tag.className  = 'tag';
+      tag.textContent = nextName();
+
+      const size = Math.floor(80 + Math.random()*50); // 80–130px
+      ball.style.width = size + 'px';
+      ball.style.height = size + 'px';
+      const top = 10 + Math.random()*80; // 10–90%
+      ball.style.top = top + '%';
+      ball.style.setProperty('--y', (Math.random() < .5 ? '-' : '') + Math.floor(Math.random()*16) + 'px');
+      const dur = 18 + Math.random()*12; // 18–30s
+      ball.style.setProperty('--dur', dur + 's');
+      ball.style.setProperty('--delay', (Math.random()*4).toFixed(2) + 's');
+
+      ball.appendChild(tag);
+      stage.appendChild(ball);
+
+      const kill = () => { ball.remove(); active--; maybeFill(); };
+      ball.addEventListener('animationend', kill, { once: true });
+    }
+
+    function maybeFill(){
+      while (active < MAX_ACTIVE) { active++; spawnBall(); }
+    }
+    maybeFill();
+
+    // Pause on hover
+    stage.addEventListener('mouseenter', ()=> stage.classList.add('paused'));
+    stage.addEventListener('mouseleave', ()=> stage.classList.remove('paused'));
+  })();
+</script>
+</body>
+</html>
